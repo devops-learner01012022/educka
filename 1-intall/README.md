@@ -1,5 +1,6 @@
 # Latest installation steps
 ## Docker install --> https://docs.docker.com/engine/install/ubuntu/
+```bash
  sudo apt-get update
  sudo apt-get install \
     ca-certificates \
@@ -12,8 +13,10 @@ echo \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io
+```
 
 ## Kubernetes insallation --> https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+```bash
 sudo apt-get install iptables
 iptables -L
 sudo iptables -A INPUT -p tcp --match multiport --dport 6443,2379,2380,10250,10259,10257 -j ACCEPT
@@ -62,17 +65,26 @@ systemctl status kubelet
 sudo apt-mark hold kubelet kubeadm kubectl
 
 kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all (warnings will be ignored)
+kubectl version 
+kubectl version --short
+kubectl version --short --kubeconfig=/etc/kubernetes/admin.conf
+
 
 mkdir $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 export KUBECONFIG=/etc/kubernetes/admin.conf
 kubectl get nodes
-## Cluster network --> https://v1-22.docs.kubernetes.io/docs/concepts/cluster-administration/networking/
-kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
-## troubleshoot
-kubedm reset
+```
 
+## Cluster network --> https://v1-22.docs.kubernetes.io/docs/concepts/cluster-administration/networking/
+```bash
+kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+```
+## troubleshoot
+```bash
+kubedm reset
+```
 
 
 # Install Kubernetes Using Script
