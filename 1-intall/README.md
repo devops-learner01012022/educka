@@ -1,3 +1,80 @@
+# Latest installation steps
+## Docker install --> https://docs.docker.com/engine/install/ubuntu/
+ sudo apt-get update
+ sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+## Kubernetes insallation --> https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+sudo apt-get install iptables
+iptables -L
+sudo iptables -A INPUT -p tcp --match multiport --dport 6443,2379,2380,10250,10259,10257 -j ACCEPT
+iptables -A INPUT -i lo -p all -j ACCEPT
+sudo swapoff -a
+sudo sed -i '/ swap / s/^/#/' /etc/fstab
+sudo mkdir /etc/docker
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
+EOF
+sudo systemctl enable docker
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+
+lsmod | grep br_netfilter
+sudo modprobe br_netfilter
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+br_netfilter
+EOF
+
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sudo sysctl --system
+
+reboot
+
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl
+
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+
+systemctl status kubelet
+sudo apt-mark hold kubelet kubeadm kubectl
+
+kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all (warnings will be ignored)
+
+mkdir $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+export KUBECONFIG=/etc/kubernetes/admin.conf
+kubectl get nodes
+## Cluster network --> https://v1-22.docs.kubernetes.io/docs/concepts/cluster-administration/networking/
+kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+## troubleshoot
+kubedm reset
+
+
+
 # Install Kubernetes Using Script
 
 ### `Step1: On Master Node Only`
