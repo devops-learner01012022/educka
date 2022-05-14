@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: azfilepvc
 spec:
-  storageClassName: azurefile
+  storageClassName: my-azurefile
   accessModes:
     - ReadWriteMany
   resources:
