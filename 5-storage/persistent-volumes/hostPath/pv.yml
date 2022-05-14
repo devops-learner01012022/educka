@@ -3,7 +3,7 @@ kind: PersistentVolume
 metadata:
   name: my-pv
 spec:
-  storageClassName: standard
+  storageClassName: standard # Standard - Mapping is done atomatically for pv and pvc - Manual Which PV has to be mapped to which PVC
   persistentVolumeReclaimPolicy: Recycle ## Retain / Delete
   capacity:
     storage: 1000Mi
