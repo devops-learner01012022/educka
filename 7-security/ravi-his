@@ -1,14 +1,31 @@
-12  mkdir -p /home/prod-user/certs
-   13  cd /home/prod-user/certs
-   14  openssl genrsa -out prod-user.key 2048
+#This user need not be part of LDAP or AD
+mkdir -p /home/prod-user/certs
+
+#Navigate to that Directory
+cd /home/prod-user/certs
+
+#Generate the Private key with Openssl 2048 bits
+openssl genrsa -out prod-user.key 2048
  
-   25  openssl req -new -key prod-user.key -out prod-user.csr -subj "/CN=prod-user/O=devops"
-   26  ls -l
-   27  cat prod-user.csr | base64 | tr -d '\n'
+#Create certificate signing request - required for CA . CN- Common Name - and O - Organization. Like the way that you provide your degree and rollnumber
+openssl req -new -key prod-user.key -out prod-user.csr -subj "/CN=prod-user/O=devops"
+
+# Check if the csr has been created
+ls -l
+cat prod-user.csr | base64 | tr -d '\n'
 
 
-   29  kubectl get csr
-   30  kubectl certificate approve prodcsr
+# You have to work with K8s csr object.
+kubectl get csr
+
+# Edit this file and paste your csr
+vi https://github.com/devops-learner01012022/educka/raw/master/7-security/rbac/CertificateSigningRequest.yml
+kubectl create -f https://github.com/devops-learner01012022/educka/raw/master/7-security/rbac/CertificateSigningRequest.yml
+kubectl get csr
+
+#Approve the request, to authenticate the user to login to cluster. These certs doesn't have any validity as it is being signed by our K8s.
+kubectl certificate approve user1
+kubectl get csr
    
   31  kubectl get csr prod-user -o jsonpath="{.status.certificate}" | base64 --decode > prod-user.crt      ## this generates a crt file
  
