@@ -1,0 +1,57 @@
+Kubernetes 1.24 version is the latest version and is not very stable. If you want to install 1.24 then you can Run the commands given below to remove kubernetes and docker and install it again:
+
+sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli
+sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce  
+sudo rm -rf /var/lib/docker /etc/docker
+sudo rm /etc/apparmor.d/docker
+sudo rm -rf /var/run/docker.sock
+kubeadm reset
+sudo apt-get purge kubeadm kubectl kubelet kubernetes-cni kube* 
+sudo apt-get autoremove
+sudo rm -rf ~/.kube
+
+swapoff -a 
+
+vi /etc/fstab 
+comment the swap line putting hash in front of the line
+
+set the nameserver ( only on master )
+
+vi /etc/resolv.conf
+nameserver 8.8.8.8
+
+Install docker
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+Insall kube
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+echo 'deb http://apt.kubernetes.io/ kubernetes-xenial main' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+apt-get update
+apt-get install -y kubelet kubeadm kubectl
+
+I would recommend you to install kubernetes 1.20 or 1.19 which is a stable version.  Run the commands given below to install 1.19 version:
+
+sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+
+sudo apt-get install docker-ce=18.06.3~ce~3-0~ubuntu containerd.io
+
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - 
+
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list 
+
+sudo apt-get update -q 
+
+sudo apt-get install -qy kubelet=1.19.6-00 kubectl=1.19.6-00 kubeadm=1.19.6-00
+
+kubeadm init --apiserver-advertise-address=<your private IP address> --pod-network-cidr=192.168.0.0/16 --ignore-preflight-errors=NumCPU,Mem
