@@ -93,9 +93,9 @@ kubedm reset
 ```
 ## Install Docker,kubeadm,kubelet,kubectl
 
-sudo wget https://raw.githubusercontent.com/lerndevops/labs/master/scripts/installK8S.sh -P /tmp
-sudo chmod 755 /tmp/installK8S.sh
-sudo bash /tmp/installK8S.sh
+sudo wget https://raw.githubusercontent.com/lerndevops/labs/master/scripts/installK8S-v1-23.sh -P /tmp
+sudo chmod 755 /tmp/installK8S-v1-23.sh
+sudo bash /tmp/installK8S-v1-23.sh
 
 ## Initialize kubernetes Master Node
  
@@ -117,9 +117,9 @@ sudo bash /tmp/installK8S.sh
 ```
 ## Install Docker,kubeadm,kubelet
 
-sudo wget https://raw.githubusercontent.com/lerndevops/labs/master/scripts/installK8S.sh -P /tmp
-sudo chmod 755 /tmp/installK8S.sh
-sudo bash /tmp/installK8S.sh
+sudo wget https://raw.githubusercontent.com/lerndevops/labs/master/scripts/installK8S-v1-23.sh -P /tmp
+sudo chmod 755 /tmp/installK8S-v1-23.sh
+sudo bash /tmp/installK8S-v1-23.sh
 
 ## Run Below on Master Node to get join token 
 
@@ -144,8 +144,8 @@ kubeadm token create --print-join-command
     sudo apt-get update ; clear
     sudo apt-get install -y docker-ce
     
-    sudo wget https://raw.githubusercontent.com/lerndevops/labs/master/kube/install/daemon.json -P /etc/docker
-    sudo service docker restart
+    sudo wget https://raw.githubusercontent.com/lerndevops/labs/master/kubernetes/0-install/daemon.json -P /etc/docker
+    sudo systemctl restart docker.service
     sudo service docker status
    
     ### INSTALL KUBEADM,KUBELET,KUBECTL
@@ -153,7 +153,7 @@ kubeadm token create --print-join-command
     sudo echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
     sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
     sudo apt-get update ; clear
-    sudo apt-get install -y kubelet kubeadm kubectl
+    sudo apt-get install -y kubelet=1.23.6-00 kubeadm=1.23.6-00 kubectl=1.23.6-00
 
     ### Initialize Master Node 
     
@@ -183,8 +183,8 @@ kubeadm token create --print-join-command
     sudo apt-get update ; clear
     sudo apt-get install -y docker-ce
     
-    sudo wget https://raw.githubusercontent.com/lerndevops/labs/master/kube/install/daemon.json -P /etc/docker
-    sudo service docker restart
+    sudo wget https://raw.githubusercontent.com/lerndevops/labs/master/kubernetes/0-install/daemon.json -P /etc/docker
+    sudo systemctl restart docker.service
     sudo service docker status
    
     ### INSTALL KUBEADM,KUBELET,KUBECTL
@@ -192,7 +192,7 @@ kubeadm token create --print-join-command
     sudo echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
     sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
     sudo apt-get update ; clear
-    sudo apt-get install -y kubelet kubeadm kubectl
+    sudo apt-get install -y kubelet=1.23.6-00 kubeadm=1.23.6-00 kubectl=1.23.6-00
 
     ## RUN Below on Master Node to get join token 
     
